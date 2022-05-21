@@ -30,7 +30,7 @@ export class WorkshopPipelineStack extends cdk.Stack {
                 }
             )
         });
-
+        
         const deploy = new WorkshopPipelineStage(this, 'Deploy');
         const deployStage = pipeline.addStage(deploy);
 
