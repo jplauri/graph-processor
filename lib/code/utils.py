@@ -22,7 +22,7 @@ def handler(event, context):
             response = sqs.send_message(
                 QueueUrl=os.environ["target_queue"],
                 DelaySeconds=0,
-                MessageBody={"graph": graph}
+                MessageBody=graph
             )
             print(response)
 
