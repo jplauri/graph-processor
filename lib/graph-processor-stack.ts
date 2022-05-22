@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import { Duration } from 'aws-cdk-lib';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as path from 'path';
 
@@ -21,6 +22,13 @@ export class GraphProcessorStack extends Stack {
       handler: 'utils.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, 'code')),
       retryAttempts: 0
+    });
+
+    input_bucket.grantRead(preprocessor);
+    input_bucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED, 
+      new s3n.LambdaDestination(preprocessor), {
+        suffix: '.dat'
     });
 
     const queue = new sqs.Queue(this, 'GraphProcessorQueue', {
