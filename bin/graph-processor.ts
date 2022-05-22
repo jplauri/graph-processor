@@ -6,7 +6,6 @@ import { GraphPipelineStack } from '../lib/pipeline-stack';
 const app = new cdk.App();
 new GraphPipelineStack(app, 'CdkGraphPipelineStack');
 
-
 //new GraphProcessorStack(app, 'GraphProcessorStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
