@@ -15,15 +15,12 @@ def push_to_queue(event, context):
             Bucket=bucket, Key=key)["Body"].read()
         lines = [x.decode() for x in file_content.split()]
 
-        print(lines)
-
         for graph in lines:
             response = sqs.send_message(
                 QueueUrl=os.environ["target_queue"],
                 DelaySeconds=0,
                 MessageBody=graph
             )
-            print(response)
 
         return {"message": "Success"}
     except Exception as e:
