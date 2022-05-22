@@ -35,5 +35,7 @@ export class GraphProcessorStack extends Stack {
       new s3n.LambdaDestination(preprocessor), {
         suffix: '.dat'
     });
+
+    queue.grantSendMessages(preprocessor);
   }
 }
