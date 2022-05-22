@@ -1,4 +1,4 @@
-#import networkx as nx
+import networkx as nx
 
 def compute_properties(event, context):
     try:
