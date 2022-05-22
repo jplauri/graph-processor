@@ -4,7 +4,7 @@ import boto3
 
 
 s3 = boto3.client('s3')
-#dynamodb = boto3.client('dynamodb')
+sqs = boto3.client('sqs')
 
 
 def handler(event, context):
@@ -18,13 +18,13 @@ def handler(event, context):
 
         print(lines)
 
-        #dynamodb = boto3.resource('dynamodb', region_name="eu-north-1")
-        #table = dynamodb.Table(os.environ["target_table"])
-
-        #for word in [w for w in lines if not w.isnumeric()]:
-        #    print(f"Pushing: {word}")
-        #    response = table.put_item(Item={"word": word})
-        #    print(response)
+        for graph in lines:
+            response = sqs.send_message(
+                QueueUrl=os.environ["target_queue"],
+                DelaySeconds=0,
+                MessageBody={"graph": graph}
+            )
+            print(response)
 
         return {"message": "Success"}
     except Exception as e:

@@ -17,11 +17,16 @@ export class GraphProcessorStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY
     });
 
+    const queue = new sqs.Queue(this, 'GraphProcessorQueue', {
+      visibilityTimeout: Duration.seconds(300)
+    });
+
     const preprocessor = new lambda.Function(this, 'InputPreprocessor', {
       runtime: lambda.Runtime.PYTHON_3_8,
       handler: 'utils.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, 'code')),
-      retryAttempts: 0
+      retryAttempts: 0,
+      environment: { "target_queue": queue.queueName }
     });
 
     input_bucket.grantRead(preprocessor);
@@ -29,10 +34,6 @@ export class GraphProcessorStack extends Stack {
       s3.EventType.OBJECT_CREATED, 
       new s3n.LambdaDestination(preprocessor), {
         suffix: '.dat'
-    });
-
-    const queue = new sqs.Queue(this, 'GraphProcessorQueue', {
-       visibilityTimeout: Duration.seconds(300)
     });
   }
 }
