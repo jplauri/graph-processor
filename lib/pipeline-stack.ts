@@ -2,21 +2,20 @@ import * as cdk from 'aws-cdk-lib';
 import * as codecommit from 'aws-cdk-lib/aws-codecommit';
 import { Construct } from 'constructs';
 import {CodeBuildStep, CodePipeline, CodePipelineSource} from "aws-cdk-lib/pipelines";
-import {WorkshopPipelineStage} from './pipeline-stage';
+import {GraphPipelineStage} from './pipeline-stage';
 
-export class WorkshopPipelineStack extends cdk.Stack {
+export class GraphPipelineStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
-        // This creates a new CodeCommit repository called 'WorkshopRepo'
-        const repo = new codecommit.Repository(this, 'WorkshopRepo', {
-            repositoryName: "WorkshopRepo"
+        const repo = new codecommit.Repository(this, 'GraphProcessor', {
+            repositoryName: "GraphProcessor"
         });
 
         // The basic pipeline declaration. This sets the initial structure
         // of our pipeline
         const pipeline = new CodePipeline(this, 'Pipeline', {
-            pipelineName: 'WorkshopPipeline',
+            pipelineName: 'GraphProcessorPipeline',
             synth: new CodeBuildStep('SynthStep', {
                     input: CodePipelineSource.codeCommit(repo, 'master'),
                     installCommands: [
@@ -31,7 +30,7 @@ export class WorkshopPipelineStack extends cdk.Stack {
             )
         });
         
-        const deploy = new WorkshopPipelineStage(this, 'Deploy');
+        const deploy = new GraphPipelineStage(this, 'Deploy');
         const deployStage = pipeline.addStage(deploy);
     }
 }
