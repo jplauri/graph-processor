@@ -24,7 +24,7 @@ export class GraphProcessorStack extends Stack {
 
     const preprocessor = new lambda.Function(this, 'InputPreprocessor', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      handler: 'preprocess.preprocess',
+      handler: 'preprocess.push_to_queue',
       code: lambda.Code.fromAsset(path.join(__dirname, 'code')),
       retryAttempts: 0,
       environment: { "target_queue": queue.queueName }
@@ -42,17 +42,8 @@ export class GraphProcessorStack extends Stack {
     const compute_properties = new lambda.Function(this, 'ComputeProperties', {
       runtime: lambda.Runtime.PYTHON_3_8,
       handler: 'process.compute_properties',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'code'), {
-        bundling: {
-          image: lambda.Runtime.PYTHON_3_9.bundlingImage,
-          command: [
-            'bash', '-c',
-            'pip install -r requirements.txt -t /asset-output && cp -au . /asset-output'
-          ],
-        },
-      }),
-      retryAttempts: 0,
-      environment: { "target_queue": queue.queueName }
+      code: lambda.Code.fromAsset(path.join(__dirname, 'code')),
+      retryAttempts: 0
     })
 
     const eventSource = new SqsEventSource(queue);
