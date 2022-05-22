@@ -20,6 +20,7 @@ export class WorkshopPipelineStack extends cdk.Stack {
             synth: new CodeBuildStep('SynthStep', {
                     input: CodePipelineSource.codeCommit(repo, 'master'),
                     installCommands: [
+                        'pip install networkx',
                         'npm install -g aws-cdk'
                     ],
                     commands: [
@@ -33,7 +34,5 @@ export class WorkshopPipelineStack extends cdk.Stack {
         
         const deploy = new WorkshopPipelineStage(this, 'Deploy');
         const deployStage = pipeline.addStage(deploy);
-
-        // Pipeline code goes here
     }
 }
