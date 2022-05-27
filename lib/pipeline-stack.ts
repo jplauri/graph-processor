@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as codecommit from 'aws-cdk-lib/aws-codecommit';
 import { Construct } from 'constructs';
-import {CodeBuildStep, CodePipeline, CodePipelineSource} from "aws-cdk-lib/pipelines";
+import {CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep} from "aws-cdk-lib/pipelines";
 import {GraphPipelineStage} from './pipeline-stage';
 
 export class GraphPipelineStack extends cdk.Stack {
@@ -32,5 +32,9 @@ export class GraphPipelineStack extends cdk.Stack {
         
         const deploy = new GraphPipelineStage(this, 'Deploy');
         const deployStage = pipeline.addStage(deploy);
+
+        deployStage.addPost(new ShellStep("Test", {
+            commands: ['python --version']
+        }));
     }
 }
